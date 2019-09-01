@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,17 @@ import java.util.stream.Collectors;
  */
 public class DefaultSingleArgCompleter extends AbstractSingleArgCompleter {
     private Supplier<List<String>> supplier;
+
+    private Function<String, List<String>> completeFunction;
+
+    public DefaultSingleArgCompleter(Function<String, List<String>> completeFunction) {
+        this.completeFunction = completeFunction;
+    }
+
+    public DefaultSingleArgCompleter(boolean partialCompleter, Function<String, List<String>> completeFunction) {
+        super(partialCompleter);
+        this.completeFunction = completeFunction;
+    }
 
     public DefaultSingleArgCompleter(List<String> candidates) {
         this(() -> candidates);
@@ -33,11 +45,16 @@ public class DefaultSingleArgCompleter extends AbstractSingleArgCompleter {
     @Override
     protected List<CharSequence> doComplete(String arg) {
         final String prefix = arg;
-        if (supplier == null) {
+        if (supplier == null && completeFunction == null) {
             return Collections.emptyList();
         }
+        List<String> candidates;
+        if (completeFunction != null) {
+            candidates = completeFunction.apply(arg);
+        } else {
+            candidates = supplier.get();
+        }
 
-        List<String> candidates = supplier.get();
         return candidates.stream()
                 .filter(candidate -> StringUtils.isBlank(prefix) || candidate.startsWith(prefix))
                 .map(s -> (CharSequence) s)
