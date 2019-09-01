@@ -1,7 +1,7 @@
 package com.dyc.embed.console.command;
 
 import com.dyc.embed.console.complete.ArgCompleter;
-import com.dyc.embed.console.complete.SingleStringArgCompleter;
+import com.dyc.embed.console.complete.SingleArgCompleter;
 import org.apache.commons.cli.CommandLine;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class HelpCommand extends PreparedCommand implements CommandRepositoryAwa
 
     @Override
     protected ArgCompleter initArgCompleter() {
-        return new SingleStringArgCompleter(commandRepository.listCommands());
+        return new SingleArgCompleter(commandRepository.listCommands());
     }
 
     @Override

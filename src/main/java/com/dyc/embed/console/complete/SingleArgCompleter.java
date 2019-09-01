@@ -10,33 +10,33 @@ import java.util.stream.Collectors;
 /**
  * @author daiyc
  */
-public class SingleStringArgCompleter implements ArgCompleter {
+public class SingleArgCompleter implements ArgCompleter {
     private List<String> candidates;
 
     private Supplier<List<String>> supplier;
 
     private boolean partComplete = false;
 
-    public SingleStringArgCompleter(Supplier<List<String>> supplier) {
+    public SingleArgCompleter(Supplier<List<String>> supplier) {
         this(supplier, false);
     }
 
-    public SingleStringArgCompleter(List<String> candidates) {
+    public SingleArgCompleter(List<String> candidates) {
         this(candidates, false);
     }
 
-    public SingleStringArgCompleter(List<String> candidates, boolean partComplete) {
+    public SingleArgCompleter(List<String> candidates, boolean partComplete) {
         this.candidates = candidates;
         this.partComplete = partComplete;
     }
 
-    public SingleStringArgCompleter(Supplier<List<String>> supplier, boolean partComplete) {
+    public SingleArgCompleter(Supplier<List<String>> supplier, boolean partComplete) {
         this.supplier = supplier;
         this.partComplete = partComplete;
     }
 
     @Override
-    public boolean partComplete() {
+    public boolean partialCompleter() {
         return partComplete;
     }
 

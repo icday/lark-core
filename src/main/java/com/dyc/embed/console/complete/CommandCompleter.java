@@ -71,7 +71,7 @@ public class CommandCompleter implements Completer {
             return -1;
         }
 
-        setCandidates(argCandidates, candidates, argCompleter.partComplete());
+        setCandidates(argCandidates, candidates, argCompleter.partialCompleter());
         if (argumentList.getCursorArgumentIndex() >= arguments.length) {
             return cursor;
         } else {
