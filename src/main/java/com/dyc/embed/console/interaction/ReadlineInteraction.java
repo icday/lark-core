@@ -5,6 +5,8 @@ import com.dyc.embed.console.command.CommandRepository;
 import com.dyc.embed.console.complete.CommandCompleter;
 import com.dyc.embed.console.complete.EnhanceCompletionHandler;
 import com.dyc.embed.console.session.Session;
+import io.termd.core.util.Vector;
+import jline.UnixTerminal;
 import jline.console.ConsoleReader;
 import org.apache.commons.lang3.StringUtils;
 import org.fusesource.jansi.AnsiRenderWriter;
@@ -19,6 +21,28 @@ import static com.dyc.embed.console.interaction.RetCode.EXIT;
  * @author daiyc
  */
 public class ReadlineInteraction extends BaseInteraction {
+    private class TelnetTerminal extends UnixTerminal {
+        private Vector defaultSize = new Vector(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        public TelnetTerminal() throws Exception {
+            super();
+        }
+
+        @Override
+        public int getWidth() {
+            return getSize().x();
+        }
+
+        @Override
+        public int getHeight() {
+            return getSize().y();
+        }
+
+        private Vector getSize() {
+            Vector size = session.size();
+            return size == null ? defaultSize : size;
+        }
+    }
+
     private final ConsoleReader consoleReader;
     private final PrintWriter writer;
     private CommandRepository commandRepository;
@@ -34,13 +58,14 @@ public class ReadlineInteraction extends BaseInteraction {
         commandFacade = new CommandFacade(commandRepository);
         try {
             consoleReader = createConsole();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private ConsoleReader createConsole() throws IOException {
-        ConsoleReader consoleReader = new ConsoleReader(session.inputStream(), session.outputStream());
+    private ConsoleReader createConsole() throws Exception {
+        TelnetTerminal telnetTerminal = new TelnetTerminal();
+        ConsoleReader consoleReader = new ConsoleReader(session.inputStream(), session.outputStream(), telnetTerminal);
         consoleReader.addCompleter(new CommandCompleter(commandRepository));
         consoleReader.setCompletionHandler(new EnhanceCompletionHandler());
         return consoleReader;

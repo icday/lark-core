@@ -24,7 +24,10 @@ public class HelpCommand extends PreparedCommand implements CommandRepositoryAwa
 
     @Override
     protected ArgCompleter initArgCompleter() {
-        return new DefaultSingleArgCompleter(commandRepository.listCommands());
+        return DefaultSingleArgCompleter
+                .builder()
+                .datasource(commandRepository.listCommands())
+                .build();
     }
 
     @Override

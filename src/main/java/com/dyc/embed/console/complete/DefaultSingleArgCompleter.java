@@ -16,30 +16,8 @@ public class DefaultSingleArgCompleter extends AbstractSingleArgCompleter {
 
     private Function<String, List<String>> completeFunction;
 
-    public DefaultSingleArgCompleter(Function<String, List<String>> completeFunction) {
-        this.completeFunction = completeFunction;
-    }
-
-    public DefaultSingleArgCompleter(boolean partialCompleter, Function<String, List<String>> completeFunction) {
+    private DefaultSingleArgCompleter(boolean partialCompleter) {
         super(partialCompleter);
-        this.completeFunction = completeFunction;
-    }
-
-    public DefaultSingleArgCompleter(List<String> candidates) {
-        this(() -> candidates);
-    }
-
-    public DefaultSingleArgCompleter(boolean partialCompleter, List<String> candidates) {
-        this(partialCompleter, () -> candidates);
-    }
-
-    public DefaultSingleArgCompleter(Supplier<List<String>> supplier) {
-        this.supplier = supplier;
-    }
-
-    public DefaultSingleArgCompleter(boolean partialCompleter, Supplier<List<String>> supplier) {
-        super(partialCompleter);
-        this.supplier = supplier;
     }
 
     @Override
@@ -54,10 +32,58 @@ public class DefaultSingleArgCompleter extends AbstractSingleArgCompleter {
         } else {
             candidates = supplier.get();
         }
+        if (candidates == null) {
+            candidates = Collections.emptyList();
+        }
 
         return candidates.stream()
                 .filter(candidate -> StringUtils.isBlank(prefix) || candidate.startsWith(prefix))
                 .map(s -> (CharSequence) s)
                 .collect(Collectors.toList());
+    }
+
+    public static class Builder {
+        private Supplier<List<String>> supplier;
+
+        private Function<String, List<String>> function;
+
+        private boolean partial = false;
+
+        private Builder() {
+        }
+
+        public Builder datasource(Function<String, List<String>> supplier) {
+            this.function = supplier;
+            return this;
+        }
+
+        public Builder datasource(Supplier<List<String>> supplier) {
+            this.supplier = supplier;
+            return this;
+        }
+
+        public Builder datasource(List<String> candidates) {
+            this.supplier = () -> candidates;
+            return this;
+        }
+
+        public Builder partial(boolean partial) {
+            this.partial = partial;
+            return this;
+        }
+
+        public DefaultSingleArgCompleter build() {
+            DefaultSingleArgCompleter completer = new DefaultSingleArgCompleter(partial);
+            if (function == null && supplier == null) {
+                throw new IllegalArgumentException();
+            }
+            completer.completeFunction = function;
+            completer.supplier = supplier;
+            return completer;
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 }

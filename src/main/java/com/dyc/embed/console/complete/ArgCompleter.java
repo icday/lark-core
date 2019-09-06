@@ -17,7 +17,7 @@ public interface ArgCompleter {
     List<CharSequence> complete(List<String> args, int cursor);
 
     /**
-     * 是否部分补全
+     * 是否部分补全（有需要手动输入的，无法补全的部分）
      *
      * @return boolean
      */

@@ -150,7 +150,7 @@ public abstract class BaseSession implements Session {
                 load(interaction);
                 mainLoop();
             } finally {
-                // TODO close connection
+                close();
             }
         });
         thread.start();

@@ -53,6 +53,9 @@ public class CommandCompleter implements Completer {
 
         String commandName = arguments[0];
         Command command = commandRepository.get(commandName);
+        if (command == null) {
+            return -1;
+        }
 
         List<String> args = new ArrayList<>();
 
