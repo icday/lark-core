@@ -89,7 +89,7 @@ public class ReadlineInteraction extends BaseInteraction {
 
             processLine(s);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             return EXIT;
         }
         return CONTINUE;
@@ -106,6 +106,7 @@ public class ReadlineInteraction extends BaseInteraction {
                 session.send("\n");
             }
         } catch (Throwable ex) {
+            ex.printStackTrace(writer);
             session.send(String.format("%s: %s\n", ex.getClass().getName(), ex.getMessage()));
         }
     }
