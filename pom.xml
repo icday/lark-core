@@ -12,7 +12,7 @@
 
     <groupId>com.daiyc.lark</groupId>
     <artifactId>lark-core</artifactId>
-    <version>0.1.0-RELEASE</version>
+    <version>0.1.2-RELEASE</version>
 
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
